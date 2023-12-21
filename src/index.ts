@@ -19,6 +19,10 @@ app.use(cors({
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use('/api/', router());
+app.use((req, res) => {
+    res.status(404).json({ status: 404, message: 'Not Found'});
+});
 
 const server = http.createServer(app);
 
@@ -27,9 +31,7 @@ server.listen(process.env.API_PORT, () => {
 });
 
 mongoose.Promise = Promise;
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect('mongodb://127.0.0.1:27017/API');
 
 mongoose.connection.on("connected", () => logger.database("Connected to MongoDB"));
 mongoose.connection.on("error", (err: Error) => logger.error(err));
-
-app.use('/', router());

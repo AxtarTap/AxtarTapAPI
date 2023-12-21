@@ -1,16 +1,5 @@
 import express from 'express';
-import { deleteUserById, getUserById, getUsers } from '../schemas/users';
-
-export const getAllUsers = async (req: express.Request, res: express.Response) => {
-    try {
-        const users = await getUsers();
-
-        return res.status(200).json(users).end();
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: 500, message: error.message });
-    }
-};
+import { deleteUserById, getUserById } from '../schemas/workers';
 
 export const deleteUser = async (req: express.Request, res: express.Response) => {
     try {

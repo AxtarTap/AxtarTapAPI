@@ -1,7 +1,6 @@
 import express from "express";
 import { authentication, generateRandomString } from "../helpers";
-import { createUser, getUserByEmail } from "../schemas/users";
-import { get } from "lodash";
+import { createUser, getUserByEmail } from "../schemas/workers";
 
 export const login = async (req: express.Request, res: express.Response) => {
     try {
