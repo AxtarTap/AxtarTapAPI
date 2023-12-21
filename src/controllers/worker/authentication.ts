@@ -1,24 +1,24 @@
 import express from "express";
-import { authentication, generateRandomString } from "../helpers";
-import { createUser, getUserByEmail } from "../schemas/workers";
+import { authentication, generateRandomString } from "../../helpers";
+import { createUser, getUserByEmail } from "../../schemas/workers";
 
 export const login = async (req: express.Request, res: express.Response) => {
     try {
         const { email, password } = req.body;
 
-        if(!email || !password) {
+        if (!email || !password) {
             return res.status(400).json({ status: 400, message: "Missing fields" });
         }
 
         const user = await getUserByEmail(email).select("+authentication.salt +authentication.token");
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({ status: 400, message: "Email or password is incorrect" });
         }
 
         const expectedHash = authentication(user.authentication.salt, password);
 
-        if(user.authentication.token !== expectedHash) {
+        if (user.authentication.token !== expectedHash) {
             return res.status(401).json({ status: 401, message: "Email or password is incorrect" });
         }
 
@@ -41,13 +41,13 @@ export const register = async (req: express.Request, res: express.Response) => {
     try {
         const { email, password, username } = req.body;
 
-        if(!email || !password || !username) {
+        if (!email || !password || !username) {
             return res.status(400).json({ status: 400, message: "Missing fields" });
         }
 
         const existingUser = await getUserByEmail(email);
 
-        if(existingUser) {
+        if (existingUser) {
             return res.status(400).json({ status: 400, message: "User already exists" });
         }
 

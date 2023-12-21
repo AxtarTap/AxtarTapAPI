@@ -31,7 +31,7 @@ server.listen(process.env.API_PORT, () => {
 });
 
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://127.0.0.1:27017/API');
+mongoose.connect(process.env.MONGO_URI);
 
 mongoose.connection.on("connected", () => logger.database("Connected to MongoDB"));
 mongoose.connection.on("error", (err: Error) => logger.error(err));
