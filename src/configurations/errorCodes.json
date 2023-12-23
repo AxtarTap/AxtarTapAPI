@@ -1,0 +1,108 @@
+{
+    "system": {
+        "server": {
+            "INTERNAL_SERVER_ERROR": {
+                "code": 10000,
+                "status": 500,
+                "message": "Internal server error, please try again later"
+            }
+        },
+        "authentication": {
+            "ALREADY_AUTHENTICATED": {
+                "code": 10001,
+                "status": 409,
+                "message": "You are already authenticated"
+            },
+            "NOT_AUTHENTICATED": {
+                "code": 10002,
+                "status": 401,
+                "message": "You are not authenticated"
+            }
+        }
+    },
+    "registration": {
+        "email": {
+            "MISSING_EMAIL": {
+                "code": 10100,
+                "status": 400,
+                "message": "Provide an email address"
+            },
+            "INVALID_EMAIL": {
+                "code": 10102,
+                "status": 400,
+                "message": "Provide a valid email address"
+            },
+            "EMAIL_ALREADY_EXISTS": {
+                "code": 10103,
+                "status": 400,
+                "message": "Email address already exists"
+            }
+        }, 
+        "password": {
+            "MISSING_PASSWORD": {
+                "code": 10104,
+                "status": 400,
+                "message": "Provide a password"
+            },
+            "INVALID_LENGTH": {
+                "code": 10105,
+                "status": 400,
+                "message": "Password must be at least 8 characters"
+            },
+            "MISSING_LOWERCASE": {
+                "code": 10106,
+                "status": 400,
+                "message": "Password must contain at least one lowercase letter"
+            },
+            "MISSING_UPPERCASE": {
+                "code": 10107,
+                "status": 400,
+                "message": "Password must contain at least one uppercase letter"
+            },
+            "MISSING_DIGIT": {
+                "code": 10108,
+                "status": 400,
+                "message": "Password must contain at least one number"
+            }
+
+        },
+        "username": {
+            "MISSING_USERNAME": {
+                "code": 10109,
+                "status": 400,
+                "message": "Provide a username"
+            },
+            "INVALID_USERNAME_LENGTH": {
+                "code": 10110,
+                "status": 400,
+                "message": "Username must be between 3 and 20 characters"
+            }
+        }
+    },
+    "authentication": {
+        "email": {
+            "MISSING_EMAIL": {
+                "code": 10111,
+                "status": 400,
+                "message": "Provide an email address"
+            },
+            "EMAIL_DOES_NOT_EXIST": {
+                "code": 10112,
+                "status": 401,
+                "message": "Account with this email does not exist"
+            }
+        },
+        "password": {
+            "MISSING_PASSWORD": {
+                "code": 10113,
+                "status": 400,
+                "message": "Provide a password"
+            },
+            "INCORRECT_PASSWORD": {
+                "code": 10114,
+                "status": 401,
+                "message": "Password is incorrect"
+            }
+        }
+    }
+}

@@ -1,4 +1,16 @@
+import { ObjectId } from 'mongoose';
 import { Logger } from 'winston';
+
+export interface RequestIdentity {
+    type: 0 | 1,
+    user: UserType
+}
+
+export interface UserType {
+    _id: ObjectId;
+    username: string;
+    email: string;
+}
 
 export interface CustomerType {
     username: string;
@@ -16,7 +28,7 @@ export interface WorkerType {
 
 interface AuthenticationType {
     token: string;
-    salted: string;
+    salt: string;
     sessionToken: string;
 }
 
