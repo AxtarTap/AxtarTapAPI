@@ -1,37 +1,61 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 import { get, merge } from 'lodash';
-import { getUserBySessionToken as getCustomerBySessionToken } from '../schemas/customers';
-import { getUserBySessionToken as getWorkerBySessionToken } from '../schemas/workers';
+import { getUserByAccessToken as getCustomerByAccessToken } from '../models/customers';
+import { getUserByAccessToken as getWorkerByAccessToken } from '../models/workers';
 import { ErrorManager } from '../helpers/managers/ErrorManager';
 import { APIError } from '../errors/APIError';
+import { verifyAccessToken } from '../helpers/security/jwt';
 
-export const checkUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const checkUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const sessionToken = req.cookies['auth-token'];
+        const authorization = req.headers['authorization'];
+        const accessToken = authorization?.split(' ')[1];
 
-        if(!sessionToken) {
+        if(!accessToken) {
             return next();
         }
 
-        const customer = await getCustomerBySessionToken(sessionToken);
-        const worker = await getWorkerBySessionToken(sessionToken);
-        if(customer) {
-            merge(req, { identity: { type: 0, user: customer } });
-        } else if(worker) {
-            merge(req, { identity: { type: 1, user: worker } });
+        const verification = await verifyAccessToken(accessToken);
+
+        if(verification) {
+            const customer = await getCustomerByAccessToken(accessToken);
+            const worker = await getWorkerByAccessToken(accessToken);
+            if(customer) {
+                merge(req, { identity: { type: 0, user: customer } });
+            } else if(worker) {
+                merge(req, { identity: { type: 1, user: worker } });
+            }
         }
 
         return next();
     } catch(err) {
-        // const errorHandler = new ErrorManager(res);
+        const errorHandler = new ErrorManager(res);
         logger.error('Error while checking user');
         logger.error(`${err.name}: ${err.message}`);
-        // errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
+        errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
     }
 }
 
-// export const isLoggedIn = async (req: express.Request, res: express.Response) => {
+export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+    const authorization = req.headers['authorization'];
+    const accessToken = authorization?.split(' ')[1];
+    const errorHandler = new ErrorManager(res);
+
+    if(!accessToken) {
+        return errorHandler.handleError(new APIError('system', 'authorization', 'MISSING_AUTHORIZATION'));
+    }
+
+    const verification = await verifyAccessToken(accessToken);
+
+    if(verification) {
+        return next();
+    } else {
+        return errorHandler.handleError(new APIError('system', 'authorization', 'AUTHORIZATION_FAILED'));
+    }
+}
+
+// export const isLoggedIn = async (req: Request, res: Response) => {
 //     try {
 //         const sessionToken = req.cookies['auth-token'];
 
@@ -54,7 +78,7 @@ export const checkUser = async (req: express.Request, res: express.Response, nex
 //     }
 // }
 
-// export const isOwner = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// export const isOwner = async (req: Request, res: Response, next: NextFunction) => {
 //     try {
 //         const { id } = req.params;
 //         const currentUserId = get(req, 'identity._id') as string;
@@ -74,7 +98,7 @@ export const checkUser = async (req: express.Request, res: express.Response, nex
 //     }
 // }
 
-// export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
 //     try {
 //         const sessionToken = req.cookies['auth-token'];
 

@@ -26,10 +26,10 @@ export interface WorkerType {
     authentication?: AuthenticationType;
 }
 
-interface AuthenticationType {
-    token: string;
-    salt: string;
-    sessionToken: string;
+export interface AuthenticationType {
+    password: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export interface CustomLogger extends Logger {

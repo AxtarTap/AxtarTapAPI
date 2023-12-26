@@ -23,13 +23,21 @@ export type ServerErrors = {
 }
 
 export type SystemAuthenticationErrors = {
+    NOT_AUTHENTICATED: APIError,
+    AUTHENTICATION_FAILED: APIError,
     ALREADY_AUTHENTICATED: APIError,
-    NOT_AUTHENTICATED: APIError
+}
+
+export type SystemAuthorizationErrors = {
+    MISSING_AUTHORIZATION: APIError,
+    NOT_AUTHORIZED: APIError,
+    AUTHORIZATION_FAILED: APIError,
 }
 
 export type SystemErrors = {
     server: ServerErrors,
     authentication: SystemAuthenticationErrors,
+    authorization: SystemAuthorizationErrors,
 }
 
 // Registration
@@ -37,6 +45,7 @@ export type RegistrationEmailErrors = {
     MISSING_EMAIL: APIError,
     INVALID_EMAIL: APIError,
     EMAIL_ALREADY_EXISTS: APIError,
+    EMAIL_DOES_NOT_EXIST: APIError,
 }
 
 export type RegistrationPasswordErrors = {
@@ -45,6 +54,7 @@ export type RegistrationPasswordErrors = {
     MISSING_LOWERCASE: APIError,
     MISSING_UPPERCASE: APIError,
     MISSING_DIGIT: APIError,
+    INCORRECT_PASSWORD: APIError,
 }
 
 export type RegistrationUsernameErrors = {
@@ -58,24 +68,7 @@ export type RegitrationErrors = {
     username: RegistrationUsernameErrors,
 }
 
-// Authentication
-export type AuthenticationEmailErrors = {
-    MISSING_EMAIL: APIError,
-    EMAIL_DOES_NOT_EXIST: APIError,
-}
-
-export type AuthenticationPasswordErrors = {
-    MISSING_PASSWORD: APIError,
-    INCORRECT_PASSWORD: APIError,
-}
-
-export type AuthenticationErrors = {
-    email: AuthenticationEmailErrors,
-    password: AuthenticationPasswordErrors,
-}
-
 export type APIErrors = {
     system: SystemErrors,
     registration: RegitrationErrors,
-    authentication: AuthenticationErrors
 }

@@ -5,13 +5,13 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
 import mongoose from "mongoose";
-import { config } from "dotenv";
 import router from "./router";
 import logger from "./utils/logger";
+import { config } from "dotenv";
 import { checkUser } from "./middlewares";
 
 config();
-const app = express()
+const app = express();
 
 app.use(cors({
     origin: 'http://localhost:8080',
@@ -22,7 +22,7 @@ app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(checkUser);
-app.use('/api/', router());
+app.use('/v1/', router());
 app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Not Found'});
 });

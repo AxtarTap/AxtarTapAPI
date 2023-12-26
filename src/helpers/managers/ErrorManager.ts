@@ -1,4 +1,4 @@
-import { handleError, handleErrors } from "../../handlers/errorHandler";
+import { APIErrors, ErrorPayload, MultipleErrorPayload } from "../../types/errorTypes";
 import { APIError } from "../../errors/APIError";
 import { Response } from "express";
 
@@ -28,15 +28,35 @@ export class ErrorManager {
         return this;
     }
 
-    public handleError(error: APIError<any, any, any>): void {
-        handleError(error, this.res);
+    public handleError <T extends keyof APIErrors, U extends keyof APIErrors[T], V extends keyof APIErrors[T][U]>(err: APIError<T, U, V>) {
+        const { code, status, message, field } = err;
+        let payload: ErrorPayload = { code, message };
+        return this.res.status(status).json({ errors: { [field]: payload } });
     }
 
-    public handleErrors(): void {
+    public handleErrors() {
         const errors = this.getErrors();
         if (errors.length > 0) {
-            handleErrors(errors, this.res);
-            this.clearErrors();
+            let payload: MultipleErrorPayload = { errors: {} };
+
+
+            errors.forEach(err => {
+                const { code, field, message } = err;
+                let length = errors.filter(error => error.field === field).length;
+
+                if (length > 1) {
+                    if (!payload.errors[field]) {
+                        payload.errors[field] = [];
+                    }
+
+                    (payload.errors[field] as ErrorPayload[]).push({ code, message });
+                } else {
+                    payload.errors[field] = { code, message };
+                }
+
+            });
+
+            return this.res.status(400).json(payload), this.clearErrors();
         }
     }
 }
