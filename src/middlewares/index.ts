@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import { getUserByAccessToken as getCustomerByAccessToken } from '../models/customers';
 import { getUserByAccessToken as getWorkerByAccessToken } from '../models/workers';
 import { ErrorManager } from '../helpers/managers/ErrorManager';
@@ -45,7 +45,6 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
     if(!accessToken) {
         return errorHandler.handleError(new APIError('system', 'authorization', 'MISSING_AUTHORIZATION'));
     }
-
     const verification = await verifyAccessToken(accessToken);
 
     if(verification) {

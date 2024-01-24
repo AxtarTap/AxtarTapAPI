@@ -43,7 +43,6 @@ export const verifyToken = async (req: Request, res: Response) => {
         logger.error(`${err.name}: ${err.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
     }
-
 }
 
 export const refreshToken = async (req: Request, res: Response) => {

@@ -43,7 +43,14 @@ export const login = async (req: Request, res: Response) => {
         user.authentication.refreshToken = refreshToken;
         
         res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh_token' });
-        res.status(200).json({ user }).end();
+        res.status(200).json({ 
+            user: {
+                _id: user._id,
+                email: user.email,
+                username: user.username,
+                accessToken: user.authentication.accessToken,
+            }
+        }).end();
         
         await user.save();
         

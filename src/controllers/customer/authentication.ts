@@ -41,9 +41,9 @@ export const login = async (req: Request, res: Response) => {
         const { accessToken, refreshToken } = await generateTokens(user.toObject());
         user.authentication.accessToken = accessToken;
         user.authentication.refreshToken = refreshToken;
-        await user.save();
-
-        return res.status(200).json({
+        
+        res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh_token' });
+        res.status(200).json({
             user: {
                 _id: user._id,
                 email: user.email,
@@ -51,7 +51,9 @@ export const login = async (req: Request, res: Response) => {
                 accessToken: user.authentication.accessToken,
             }
         }).end();
-
+        
+        await user.save();
+        
     } catch (error) {
         const errorHandler = new ErrorManager(res);
         logger.error('Error while logging user in');

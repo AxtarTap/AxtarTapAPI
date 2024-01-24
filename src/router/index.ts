@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { workerAuthentication, customerAuthentication } from './authentication';
-import { me } from './me';
-import { worker } from './worker';
+import worker from './worker';
+import customer from './customer';
+import google_auth from './google_auth';
+import me from './me';
 
 const router = Router();
 
 export default (): Router => {
-    workerAuthentication(router);
-    // worker(router);
-    customerAuthentication(router);
-    me(router);
+    router.use('/worker', worker());
+    router.use('/customer', customer());
+    router.use('/auth/google', google_auth());
+    router.use('/@me', me());
     return router;
 }
