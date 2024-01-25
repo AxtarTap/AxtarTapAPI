@@ -8,67 +8,42 @@ import cors from "cors";
 import mongoose from "mongoose";
 import router from "./router";
 import logger from "./utils/logger";
+import flash from "connect-flash";
 import { config } from "dotenv";
+import { host as $ } from "./utils";
 import { checkUser } from "./middlewares";
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import { GoogleAuthType, findOrCreateUser } from "./models/google_auth";
+import { CustomerStrategy, WorkerStrategy } from "./helpers/passport";
 
 config();
 const app = express();
 
+// Middlewares
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: $(),
     credentials: true,
 }));
 
+app.use(flash());
 app.use(compression());
 app.use(cookieParser());
-// app.use(passport.initialize());
-// app.use(passport.session());
 app.use(bodyParser.json());
 app.use(checkUser);
 app.use('/v1/', router());
-
-app.get('/error', (req, res) => {
-    // console.log('error', req);
-    res.send(200)
-});
-app.get('/dashboard', (req, res) => {
-    // console.log('dashboard', req);
-    res.send(200)
-});
+passport.use('customer', CustomerStrategy);
+passport.use('worker', WorkerStrategy);
 
 app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Not Found'});
 });
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/api/auth/google/callback",
-    passReqToCallback: true
-},
-    async function (req: Request, accessToken: string, refreshToken: string, profile: Profile, done: DoneCallback) {
-        try {
-            const payload: GoogleAuthType = {
-                googleId: profile.id,
-                username: profile.displayName,
-                email: profile.emails[0].value
-            }
-            const user = await findOrCreateUser(payload)
-            done(null, user);
-        } catch (err) {
-            done(err);
-        };
-    } as any
-)); 
-
+// Server
 const server = http.createServer(app);
 
 server.listen(process.env.API_PORT, () => {
     logger.info(`Server is running on port http://localhost:${process.env.API_PORT}/`);
 });
 
+// Database
 mongoose.Promise = Promise;
 mongoose.connect(process.env.MONGO_URI);
 

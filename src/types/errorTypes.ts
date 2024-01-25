@@ -46,6 +46,7 @@ export type RegistrationEmailErrors = {
     INVALID_EMAIL: APIError,
     EMAIL_ALREADY_EXISTS: APIError,
     EMAIL_DOES_NOT_EXIST: APIError,
+    EMAIL_LINKED_TO_GOOGLE: APIError,
 }
 
 export type RegistrationPasswordErrors = {

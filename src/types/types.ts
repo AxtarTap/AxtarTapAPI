@@ -13,23 +13,36 @@ export interface UserType {
 }
 
 export interface CustomerType {
+    _id: ObjectId;
+    authType: keyof AuthTypes;
     username: string;
     email: string;
-    password: string;
     authentication?: AuthenticationType;
+    googleAuth?: GoogleAuthType;
 }
 
 export interface WorkerType {
+    _id: ObjectId;
+    authType: keyof AuthTypes;
     username: string;
     email: string;
-    password: string;
     authentication?: AuthenticationType;
+    googleAuth?: GoogleAuthType;
 }
 
 export interface AuthenticationType {
     password: string;
     accessToken: string;
     refreshToken: string;
+}
+
+export interface GoogleAuthType {
+    id: string;
+}
+
+export interface AuthTypes {
+    0: 'system',
+    1: 'google'
 }
 
 export interface CustomLogger extends Logger {

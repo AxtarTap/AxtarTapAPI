@@ -2,7 +2,7 @@ import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenModel, createRefreshToken } from '../../models/refreshTokens';
-import { UserType } from '../../types/types'; 
+import { CustomerType, UserType, WorkerType } from '../../types/types'; 
 import { config } from 'dotenv';
 config();
 
@@ -57,6 +57,19 @@ const generateRefreshToken = async (userId: string, jwtId: string): Promise <str
         });
 
     }
+    return token;
+}
+
+export const generateGoogleAccessToken = async (user: CustomerType | WorkerType): Promise <string> => {
+    const payload = {
+        userId: user._id.toString(),
+        googleId: user.googleAuth.id
+    }
+
+    let token = jwt.sign(payload, JWT_ACCESS_TOKEN_SECRET, {
+        expiresIn: '2d',
+    });
+
     return token;
 }
 

@@ -34,6 +34,10 @@ export const login = async (req: Request, res: Response) => {
             return errorHandler.handleError(new APIError('registration', 'email', 'EMAIL_DOES_NOT_EXIST'));
         }
 
+        if(user.authType !== 0) {
+            return errorHandler.handleError(new APIError('registration', 'email', 'EMAIL_LINKED_TO_GOOGLE'));
+        }
+
         if(!(await passwordMatches(password, user.authentication.password))) {
             return errorHandler.handleError(new APIError('registration', 'password', 'INCORRECT_PASSWORD'));
         }
@@ -42,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
         user.authentication.accessToken = accessToken;
         user.authentication.refreshToken = refreshToken;
         
-        res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh_token' });
+        res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh-token' });
         res.status(200).json({
             user: {
                 _id: user._id,
@@ -56,7 +60,7 @@ export const login = async (req: Request, res: Response) => {
         
     } catch (error) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while logging user in');
+        logger.error('Error while logging user[customer] in');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));  
     }
@@ -100,7 +104,7 @@ export const register = async (req: Request, res: Response) => {
             user.authentication.accessToken = accessToken;
             user.authentication.refreshToken = refreshToken;
             
-            res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh_token' });
+            res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh-token' });
             res.status(201).json({ 
                 user: {
                     _id: user._id,
@@ -115,7 +119,7 @@ export const register = async (req: Request, res: Response) => {
 
     } catch (error) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while registering user');
+        logger.error('Error while registering user[customer]');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));  
     }
@@ -136,12 +140,12 @@ export const logout = async (req: Request, res: Response) => {
         user.authentication.refreshToken = null;
         await user.save();
 
-        res.cookie('refresh_token', '', { httpOnly: true, maxAge: 1, path: '/api/@me/refresh_token' });
+        res.cookie('refresh_token', '', { httpOnly: true, maxAge: 1, path: '/api/@me/refresh-token' });
         res.status(200).json({ status: 200, message: "Logged out successfully" }).end();
 
     } catch (error) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while logging user out');
+        logger.error('Error while logging user[customer] out');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
     }

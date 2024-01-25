@@ -61,8 +61,13 @@
             },
             "EMAIL_DOES_NOT_EXIST": {
                 "code": 11003,
-                "status": 401,
+                "status": 400,
                 "message": "Account with this email does not exist"
+            },
+            "EMAIL_LINKED_TO_GOOGLE": {
+                "code": 11004,
+                "status": 400,
+                "message": "This email address is linked to a Google account, please login with Google"
             }
         }, 
         "password": {
