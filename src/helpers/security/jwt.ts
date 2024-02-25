@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenModel, createRefreshToken } from '../../models/refreshTokens';
 import { CustomerType, UserType, WorkerType } from '../../types/types'; 
+import { getUserById as getCustomerById } from '../../models/customers';
+import { getUserById as getWorkerById } from '../../models/workers';
 import { config } from 'dotenv';
 config();
 
@@ -18,7 +20,9 @@ export const generateTokens = async (user: UserType): Promise <{accessToken: str
 }
 
 export const generateAccessToken = async (userId: string, jwtId: string): Promise <string> => {
+    const type = await findUserType(userId);
     const payload = {
+        type,
         userId
     }
 
@@ -31,7 +35,9 @@ export const generateAccessToken = async (userId: string, jwtId: string): Promis
 }
 
 const generateRefreshToken = async (userId: string, jwtId: string): Promise <string> => {
+    const type = await findUserType(userId);
     const payload = {
+        type,
         userId
     }
 
@@ -61,7 +67,9 @@ const generateRefreshToken = async (userId: string, jwtId: string): Promise <str
 }
 
 export const generateGoogleAccessToken = async (user: CustomerType | WorkerType): Promise <string> => {
+    const type = await findUserType(user._id.toString());
     const payload = {
+        type,
         userId: user._id.toString(),
         googleId: user.googleAuth.id
     }
@@ -73,11 +81,44 @@ export const generateGoogleAccessToken = async (user: CustomerType | WorkerType)
     return token;
 }
 
-export const verifyAccessToken = (token: string): Promise <any> => {
+export const verifyAccessToken = async (token: string): Promise <any> => {
     return new Promise((resolve) => {
-        jwt.verify(token, JWT_ACCESS_TOKEN_SECRET, (err, decoded) => {
+        jwt.verify(token, JWT_ACCESS_TOKEN_SECRET, async (err, decoded: DecodedPayload) => {
             if(err) return resolve(false);
-            resolve(true);
+
+            const { type, userId } = decoded;
+
+            if(type === 0) {
+                const customer = await getCustomerById(userId).select('+authentication.accessToken');
+
+                if(customer.authentication.accessToken === token) {
+                    return resolve(true);
+                } else {
+                    return resolve(false);
+                }
+                
+            } else if(type === 1) {
+                const worker = await getWorkerById(userId).select('+authentication.accessToken');
+
+                if (worker.authentication.accessToken === token) {
+                    return resolve(true);
+                } else {
+                    return resolve(false);
+                }
+            }
         });
     });
+}
+
+interface DecodedPayload extends jwt.JwtPayload {
+    type: number;
+    userId: string;
+}
+
+async function findUserType(userId: string): Promise<Number> {
+    const customer = await getCustomerById(userId);
+    const worker = await getWorkerById(userId);
+
+    if(customer) return 0;
+    else if(worker) return 1;
 }

@@ -8,8 +8,9 @@ export interface CustomerType {
     password: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
+    createdDate?: Date;
 }
-// TODO: Add creation date
+
 export const CustomerSchema = new Schema<CustomerType>({
     authType: { type: Number, default: 0 },
     username: { type: String, required: true },
@@ -23,12 +24,18 @@ export const CustomerSchema = new Schema<CustomerType>({
         refreshToken: { type: String, select: false }
     },
     googleAuth: {
-        id: { type: String, required: true },
-    }
+        id: {
+            type: String, required: function () {
+                return !this.authentication.password && !this.authentication.refreshToken;
+            }
+        }
+    },  
+    createdDate: { type: Date, default: Date.now() }
 });
 
 export const CustomerModel = model<CustomerType >("Customer", CustomerSchema);
 
+// Functions
 export const getUserByEmail = (email: string) => CustomerModel.findOne({ email });
 export const getUserByAccessToken = (accessToken: string) => CustomerModel.findOne({
     "authentication.accessToken": accessToken

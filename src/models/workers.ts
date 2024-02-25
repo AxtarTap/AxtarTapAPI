@@ -8,6 +8,7 @@ export interface WorkerType {
     password: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
+    createdDate?: Date;
 }
 
 export const WorkerSchema = new Schema<WorkerType>({
@@ -24,12 +25,18 @@ export const WorkerSchema = new Schema<WorkerType>({
         refreshToken: { type: String, select: false }
     },
     googleAuth: {
-        id: { type: String, required: true },
-    }
+        id: {
+            type: String, required: function () {
+                return !this.authentication.password && !this.authentication.refreshToken;
+            }
+        }
+    },
+    createdDate: { type: Date, default: Date.now() }
 });
 
 export const WorkerModel = model<WorkerType>("Worker", WorkerSchema);
 
+// Functions
 export const getUserByEmail = (email: string) => WorkerModel.findOne({ email });
 export const getUserByAccessToken = (accessToken: string) => WorkerModel.findOne({
     "authentication.accessToken": accessToken

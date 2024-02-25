@@ -1,0 +1,47 @@
+{
+    "standart": {
+        "configurations": {
+            "name": "standart",
+            "title": "Standart",
+            "description": "Standart customer package",
+            "postPerDay": 1,
+            "price": 20
+        },
+        "benefits": {
+            "likeCount": 0,
+            "saveCount": 0,
+            "commentCount": 0,
+            "credit": 30
+        }
+    },
+    "pro": {
+        "configurations": {
+            "name": "pro",
+            "title": "Pro",
+            "description": "Pro customer package",
+            "postPerDay": 1,
+            "price": 25
+        },
+        "benefits": {
+            "likeCount": 0,
+            "saveCount": 0,
+            "commentCount": 0,
+            "credit": 30
+        }
+    },
+    "enterprise": {
+        "configurations": {
+            "name": "enterprise",
+            "title": "Enterprise",
+            "description": "Enterprise customer package",
+            "postPerDay": 1,
+            "price": 30
+        },
+        "benefits": {
+            "likeCount": 0,
+            "saveCount": 0,
+            "commentCount": 0,
+            "credit": 30
+        }
+    }
+}

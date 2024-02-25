@@ -19,6 +19,7 @@ export interface CustomerType {
     email: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
+    createdDate?: Date;
 }
 
 export interface WorkerType {
@@ -28,6 +29,7 @@ export interface WorkerType {
     email: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
+    createdDate?: Date;
 }
 
 export interface AuthenticationType {
@@ -45,7 +47,7 @@ export interface AuthTypes {
     1: 'google'
 }
 
-export interface CustomLogger extends Logger {
+export interface APILogger extends Logger {
     database?: (message: string) => void;
     request?: (message: string) => void;
 }

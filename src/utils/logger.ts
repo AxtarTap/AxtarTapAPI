@@ -1,4 +1,4 @@
-import { CustomLogger } from 'types/types';
+import { APILogger } from 'types/types';
 import { createLogger, addColors, format, transports } from 'winston';
 const { combine, timestamp, printf, colorize, padLevels, prettyPrint, errors } = format;
 
@@ -21,7 +21,7 @@ const options = {
 
 addColors(options.colors);
 
-const logger: CustomLogger = createLogger({
+const logger: APILogger = createLogger({
     levels: options.levels,
     format: combine(
         errors({ stack: true }),

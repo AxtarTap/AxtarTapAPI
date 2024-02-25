@@ -54,6 +54,34 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
     }
 }
 
+export const isCustomer = async (req: Request, res: Response, next: NextFunction) => {
+    const authorization = req.headers['authorization'];
+    const accessToken = authorization?.split(' ')[1];
+    const errorHandler = new ErrorManager(res);
+
+    const user = await getCustomerByAccessToken(accessToken);
+
+    if(user) {
+        return next();
+    } else {
+        return errorHandler.handleError(new APIError('system', 'authorization', 'AUTHORIZATION_FAILED'));
+    }
+}
+
+export const isWorker = async (req: Request, res: Response, next: NextFunction) => {
+    const authorization = req.headers['authorization'];
+    const accessToken = authorization?.split(' ')[1];
+    const errorHandler = new ErrorManager(res);
+
+    const user = await getWorkerByAccessToken(accessToken);
+
+    if(user) {
+        return next();
+    } else {
+        return errorHandler.handleError(new APIError('system', 'authorization', 'AUTHORIZATION_FAILED'));
+    }
+}
+
 // export const isLoggedIn = async (req: Request, res: Response) => {
 //     try {
 //         const sessionToken = req.cookies['auth-token'];

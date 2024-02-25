@@ -134,16 +134,18 @@ export const logout = async (req: Request, res: Response) => {
             return errorHandler.handleError(new APIError('system', 'authentication', 'NOT_AUTHENTICATED'));
         }
 
-        const user = await getUserById(identity.user._id.toString());
-        const refreshToken = await deleteRefreshTokenById(identity.user._id.toString());
+        const user = await getUserById(identity.user._id.toString()).select('+authentication.password');
+        await deleteRefreshTokenById(identity.user._id.toString());
         user.authentication.accessToken = null;
         user.authentication.refreshToken = null;
-        await user.save();
-
+        
         res.cookie('refresh_token', '', { httpOnly: true, maxAge: 1, path: '/api/@me/refresh-token' });
         res.status(200).json({ status: 200, message: "Logged out successfully" }).end();
-
+        
+        await user.save();
+        
     } catch (error) {
+        console.error(error);
         const errorHandler = new ErrorManager(res);
         logger.error('Error while logging user[customer] out');
         logger.error(`${error.name}: ${error.message}`);

@@ -30,3 +30,4 @@ export const getRefreshTokenById = (id: string) => RefreshTokenModel.findById(id
 export const getRefreshTokenJwtId = (id: string) => RefreshTokenModel.findOne({ jwtId: id });
 export const createRefreshToken = (values: Record<string, any>) => new RefreshTokenModel(values).save().then((refreshToken: any) => refreshToken.toObject());
 export const deleteRefreshTokenById = (id: string) => RefreshTokenModel.findOneAndDelete({ _id: id });
+export const deleteRefreshTokenByUserId = (id: string) => RefreshTokenModel.findOneAndDelete({ userId: id });

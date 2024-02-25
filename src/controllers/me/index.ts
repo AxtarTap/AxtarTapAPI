@@ -10,12 +10,14 @@ import { ErrorManager } from "../../helpers/managers/ErrorManager";
 import logger from "../../utils/logger";
 
 export const getUserInformation = async (req: Request, res: Response) => {
+
+    // TODO: Add subscription details to the response
     try {
         const identity: RequestIdentity = get(req, 'identity');
         const model = identity.type === 0 ? CustomerModel : WorkerModel;
         const userData = await model.findById(identity.user._id.toString()).select('-__v');
 
-        return res.status(200).json({ user: userData }).end();
+        return res.status(200).json({ type: identity.type, user: userData }).end();
     } catch(err) {
         const errorHandler = new ErrorManager(res);
         logger.error('Error while getting user information');
@@ -56,11 +58,10 @@ export const refreshToken = async (req: Request, res: Response) => {
         if(!refreshTokenCookie) {
             return res.status(401).end();
         }
-
         if (!refreshToken || refreshToken.token !== user.authentication.refreshToken || user.authentication.refreshToken !== refreshTokenCookie) {
             return res.status(401).end();
         }
-
+        
         const accessToken = await generateAccessToken(user._id.toString(), refreshToken.jwtId);
 
         res.status(200).json({ accessToken }).end();
