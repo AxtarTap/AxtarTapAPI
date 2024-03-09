@@ -4,7 +4,7 @@
   "description": "AxtarTap Backend",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon",
+    "server": "nodemon",
     "test": "ts-node ./src/tests/index.test.ts",
     "build": "tsc"
   },

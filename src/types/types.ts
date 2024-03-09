@@ -19,7 +19,8 @@ export interface CustomerType {
     email: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
-    createdDate?: Date;
+    createdDate?: number;
+    updatedDate?: number;
 }
 
 export interface WorkerType {
@@ -29,7 +30,8 @@ export interface WorkerType {
     email: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
-    createdDate?: Date;
+    createdDate?: number;
+    updatedDate?: number;
 }
 
 export interface AuthenticationType {

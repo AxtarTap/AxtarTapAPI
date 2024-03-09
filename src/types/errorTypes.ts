@@ -34,10 +34,18 @@ export type SystemAuthorizationErrors = {
     AUTHORIZATION_FAILED: APIError,
 }
 
+export type SystemPayloadErrors = {
+    INVALID_PAYLOAD: APIError,
+    MISSING_PROPERTY: APIError,
+    INVALID_PROPERTY: APIError,
+    INCORRECT_PROPERTY: APIError,
+}
+
 export type SystemErrors = {
     server: ServerErrors,
     authentication: SystemAuthenticationErrors,
     authorization: SystemAuthorizationErrors,
+    payload: SystemPayloadErrors
 }
 
 // Registration
@@ -54,6 +62,7 @@ export type RegistrationPasswordErrors = {
     INVALID_LENGTH: APIError,
     MISSING_LOWERCASE: APIError,
     MISSING_UPPERCASE: APIError,
+    MISSING_CHAR: APIError,
     MISSING_DIGIT: APIError,
     INCORRECT_PASSWORD: APIError,
 }
@@ -69,7 +78,17 @@ export type RegitrationErrors = {
     username: RegistrationUsernameErrors,
 }
 
+// Subscription
+export type SubscriptionPayloadErrors = {
+    ALREADY_SUBSCRIBED: APIError,
+}
+
+export type SubscriptionErrors = {
+    payload: SubscriptionPayloadErrors
+}
+
 export type APIErrors = {
     system: SystemErrors,
     registration: RegitrationErrors,
+    subscription: SubscriptionErrors
 }

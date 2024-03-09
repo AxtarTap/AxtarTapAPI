@@ -1,7 +1,4 @@
 import { Document, Schema, model } from "mongoose";
-import { CustomerSchema } from "./customers";
-import { WorkerSchema } from "./workers";
-import { CustomerType, WorkerType } from "types/types";
 
 export interface RefreshToken extends Document {
     token: string;
@@ -9,9 +6,9 @@ export interface RefreshToken extends Document {
     jwtId: string;
     used?: boolean;
     invalidated?: boolean;
-    expiryDate: Date;
-    createdAt?: Date;
-    updatedAt?: Date;
+    expiryDate: number;
+    createdDate?: number;
+    updatedDate?: number;
 }
 
 const RefreshTokenSchema = new Schema<RefreshToken>({
@@ -20,9 +17,9 @@ const RefreshTokenSchema = new Schema<RefreshToken>({
     jwtId: { type: String, required: true },
     used: { type: Boolean, default: false },
     invalidated: { type: Boolean, default: false },
-    expiryDate: { type: Date, required: true },
-    createdAt: { type: Date, default: Date.now() },
-    updatedAt: { type: Date }
+    expiryDate: { type: Number, required: true },
+    createdDate: { type: Number, default: Date.now() },
+    updatedDate: { type: Number, default: null }
 });
 
 export const RefreshTokenModel = model<RefreshToken>("RefreshToken", RefreshTokenSchema);

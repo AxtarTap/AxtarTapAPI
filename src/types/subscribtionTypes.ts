@@ -21,7 +21,11 @@ export interface SubscriptionBenefits {
 }
 
 export type SubscriptionTypes = {
-    'standart': Subscription,
+    'standard': Subscription,
     'pro': Subscription,
-    'enterprise': Subscription
+    'enterprise': Subscription,
 }   
+
+export interface SubscriptionRequestPayload {
+    tier: keyof SubscriptionTypes;
+}

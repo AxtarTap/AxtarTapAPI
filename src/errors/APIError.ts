@@ -20,4 +20,4 @@ export class APIError<T extends keyof APIErrors, U extends keyof APIErrors[T], V
         this.errorType = errorType.toString();
 
     }
-}   
+}

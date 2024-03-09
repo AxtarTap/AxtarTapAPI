@@ -31,7 +31,7 @@ export const checkUser = async (req: Request, res: Response, next: NextFunction)
         return next();
     } catch(err) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while checking user');
+        logger.error('An error occured while checking user');
         logger.error(`${err.name}: ${err.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
     }
@@ -99,7 +99,7 @@ export const isWorker = async (req: Request, res: Response, next: NextFunction) 
 //         }
 //     } catch (error) {
 //         const errorHandler = new ErrorManager(res);
-//         logger.error('Error while checking if user is logged in');
+//         logger.error('An error occured while checking if user is logged in');
 //         logger.error(`${error.name}: ${error.message}`);
 //         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));  
 //     }

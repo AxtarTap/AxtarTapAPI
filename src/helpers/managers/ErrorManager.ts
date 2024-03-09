@@ -10,8 +10,14 @@ export class ErrorManager {
         this.res = res;
     }
 
-    public addError(error: APIError<any, any, any>): this {
-        this.errors.push(error);
+    public addError<T extends keyof APIErrors, U extends keyof APIErrors[T], V extends keyof APIErrors[T][U]>(err: APIError<T, U, V>, options?: { [key: string]: string }) {
+        if (options) {
+            Object.keys(options).forEach(key => {
+                err.message = err.message.replaceAll(`%${key}%`, options[key]);
+            });
+        }
+        
+        this.errors.push(err);
         return this;
     }
 
@@ -28,8 +34,15 @@ export class ErrorManager {
         return this;
     }
 
-    public handleError <T extends keyof APIErrors, U extends keyof APIErrors[T], V extends keyof APIErrors[T][U]>(err: APIError<T, U, V>) {
-        const { code, status, message, field } = err;
+    public handleError<T extends keyof APIErrors, U extends keyof APIErrors[T], V extends keyof APIErrors[T][U]>(err: APIError<T, U, V>, options?: { [key: string]: string }) {
+        let { code, status, message, field } = err;
+
+        if(options) {
+            Object.keys(options).forEach(key => {
+                message = message.replaceAll(`%${key}%`, options[key])
+            });
+        }
+        
         let payload: ErrorPayload = { code, message };
         return this.res.status(status).json({ errors: { [field]: payload } });
     }

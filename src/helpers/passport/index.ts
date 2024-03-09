@@ -25,6 +25,7 @@ export const CustomerStrategy = new Strategy({
 
                 const accessToken = await generateGoogleAccessToken(user.toObject());
                 user.authentication.accessToken = accessToken;
+                user.updatedDate = Date.now();
                 
                 done(null, user);
                 await user.save();
@@ -32,6 +33,7 @@ export const CustomerStrategy = new Strategy({
                 const newUser = new CustomerModel({ authType: 1, username, email, googleAuth: { id: googleId } });
                 const accessToken = await generateGoogleAccessToken(newUser.toObject());
                 newUser.authentication.accessToken = accessToken;
+                newUser.updatedDate = Date.now();
 
                 done(null, newUser);
                 await newUser.save();
@@ -63,6 +65,7 @@ export const WorkerStrategy = new Strategy({
 
                 const accessToken = await generateGoogleAccessToken(user.toObject());
                 user.authentication.accessToken = accessToken;
+                user.updatedDate = Date.now();
 
                 done(null, user);
                 await user.save();
@@ -70,6 +73,7 @@ export const WorkerStrategy = new Strategy({
                 const newUser = new WorkerModel({ authType: 1, username, email, googleAuth: { id: googleId } });
                 const accessToken = await generateGoogleAccessToken(newUser.toObject());
                 newUser.authentication.accessToken = accessToken;
+                newUser.updatedDate = Date.now();
 
                 done(null, newUser);
                 await newUser.save();

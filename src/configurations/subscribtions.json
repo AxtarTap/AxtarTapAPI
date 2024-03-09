@@ -1,9 +1,9 @@
 {
-    "standart": {
+    "standard": {
         "configurations": {
-            "name": "standart",
-            "title": "Standart",
-            "description": "Standart customer package",
+            "name": "standard",
+            "title": "standard",
+            "description": "standard customer package",
             "postPerDay": 1,
             "price": 20
         },

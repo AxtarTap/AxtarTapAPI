@@ -49,7 +49,7 @@ const generateRefreshToken = async (userId: string, jwtId: string): Promise <str
     const refreshToken = await RefreshTokenModel.findOne({ userId });
 
     if(refreshToken) {
-        refreshToken.updatedAt = moment().toDate();
+        refreshToken.updatedDate = Date.now();
         refreshToken.token = token;
         await refreshToken.save();
     } else {

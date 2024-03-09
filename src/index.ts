@@ -13,6 +13,9 @@ import { config } from "dotenv";
 import { host as $ } from "./utils";
 import { checkUser } from "./middlewares";
 import { CustomerStrategy, WorkerStrategy } from "./helpers/passport";
+import { exec } from "child_process";
+
+console.clear();
 
 config();
 const app = express();
@@ -39,13 +42,14 @@ app.use((req, res) => {
 // Server
 const server = http.createServer(app);
 
-server.listen(process.env.API_PORT, () => {
-    logger.info(`Server is running on port http://localhost:${process.env.API_PORT}/`);
-});
-
 // Database
 mongoose.Promise = Promise;
 mongoose.connect(process.env.MONGO_URI);
 
-mongoose.connection.on("connected", () => logger.database("Connected to MongoDB"));
-mongoose.connection.on("error", (err: Error) => logger.error(err));
+mongoose.connection.once('connected', () => {
+    server.listen(process.env.API_PORT, () => {
+        logger.info(`Server is running on port http://localhost:${process.env.API_PORT}/`);
+    });
+});
+mongoose.connection.on('connected', () => logger.database('Connected to MongoDB'));
+mongoose.connection.on('error', (err: Error) => logger.error(err));

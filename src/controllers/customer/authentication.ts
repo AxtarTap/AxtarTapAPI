@@ -7,6 +7,7 @@ import { hash, passwordMatches } from "../../helpers/security/passwordHash";
 import { generateTokens } from "../../helpers/security/jwt";
 import { RequestIdentity } from "../../types/types";
 import { deleteRefreshTokenById } from "../../models/refreshTokens";
+import { validateEmail, validatePassword, validateUsername } from "../../utils";
 import logger from "../../utils/logger";
 
 export const login = async (req: Request, res: Response) => {
@@ -45,6 +46,7 @@ export const login = async (req: Request, res: Response) => {
         const { accessToken, refreshToken } = await generateTokens(user.toObject());
         user.authentication.accessToken = accessToken;
         user.authentication.refreshToken = refreshToken;
+        user.updatedDate = Date.now();
         
         res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 864000000, path: '/api/@me/refresh-token' });
         res.status(200).json({
@@ -60,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
         
     } catch (error) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while logging user[customer] in');
+        logger.error('An error occured while logging user[customer] in');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));  
     }
@@ -119,7 +121,7 @@ export const register = async (req: Request, res: Response) => {
 
     } catch (error) {
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while registering user[customer]');
+        logger.error('An error occured while registering user[customer]');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));  
     }
@@ -138,6 +140,7 @@ export const logout = async (req: Request, res: Response) => {
         await deleteRefreshTokenById(identity.user._id.toString());
         user.authentication.accessToken = null;
         user.authentication.refreshToken = null;
+        user.updatedDate = Date.now();
         
         res.cookie('refresh_token', '', { httpOnly: true, maxAge: 1, path: '/api/@me/refresh-token' });
         res.status(200).json({ status: 200, message: "Logged out successfully" }).end();
@@ -147,75 +150,8 @@ export const logout = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         const errorHandler = new ErrorManager(res);
-        logger.error('Error while logging user[customer] out');
+        logger.error('An error occured while logging user[customer] out');
         logger.error(`${error.name}: ${error.message}`);
         errorHandler.handleError(new APIError('system', 'server', 'INTERNAL_SERVER_ERROR'));
-    }
-}
-
-const validateEmail = (email: string, errorHandler: ErrorManager): boolean => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-    if (!emailRegex.test(email)) {
-        errorHandler.addError(new APIError('registration', 'email', 'INVALID_EMAIL'));
-    }
-
-    if (errorHandler.hasErrors()) {
-        errorHandler.handleErrors();
-        return false;
-    } else {
-        return true;
-    }
-}
-
-const validatePassword = (password: string, errorHandler: ErrorManager): boolean => {
-    const minLength = 8;
-
-    const uppercaseRegex = /[A-ZİŞĞÜÖÇƏ]/u;
-    const lowercaseRegex = /[a-zıiışğüöçə]/u;
-    const digitRegex = /\d/;
-    // const specialCharRegex = /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/;
-
-    if (password.length < minLength) {
-        errorHandler.addError(new APIError('registration', 'password', 'INVALID_LENGTH'));
-    }
-    
-    // if (!lowercaseRegex.test(password)) {
-    //     errorHandler.addError(new APIError('registration', 'password', 'MISSING_LOWERCASE'));
-    // }
-
-    // if (!uppercaseRegex.test(password)) {
-    //     errorHandler.addError(new APIError('registration', 'password', 'MISSING_UPPERCASE'));
-    // }
-
-    if (!digitRegex.test(password)) {
-        errorHandler.addError(new APIError('registration', 'password', 'MISSING_DIGIT'));
-    }
-
-    // if (!specialCharRegex.test(password)) {
-    //    errorHandler.addError(new APIError('registration', 'password', 'MISSING_SPECIAL_CHAR'));
-    // }
-
-    if (errorHandler.hasErrors()) {
-        errorHandler.handleErrors();
-        return false;
-    } else {
-        return true;
-    }
-}
-
-const validateUsername = (username: string, errorHandler: ErrorManager): boolean => {
-    const minLength = 3;
-    const maxLength = 20;
-
-    if (username.length < minLength || username.length > maxLength) {
-        errorHandler.addError(new APIError('registration', 'username', 'INVALID_USERNAME_LENGTH'));
-    }
-
-    if (errorHandler.hasErrors()) {
-        errorHandler.handleErrors();
-        return false;
-    } else {
-        return true;
     }
 }

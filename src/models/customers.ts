@@ -8,7 +8,8 @@ export interface CustomerType {
     password: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
-    createdDate?: Date;
+    createdDate?: number;
+    updatedDate?: number;
 }
 
 export const CustomerSchema = new Schema<CustomerType>({
@@ -30,18 +31,19 @@ export const CustomerSchema = new Schema<CustomerType>({
             }
         }
     },  
-    createdDate: { type: Date, default: Date.now() }
+    createdDate: { type: Number, default: Date.now() },
+    updatedDate: { type: Number, default: null }
 });
 
 export const CustomerModel = model<CustomerType >("Customer", CustomerSchema);
 
 // Functions
-export const getUserByEmail = (email: string) => CustomerModel.findOne({ email });
-export const getUserByAccessToken = (accessToken: string) => CustomerModel.findOne({
+export const getUserByEmail = (email: string, select?: string) => CustomerModel.findOne({ email }).select(select);
+export const getUserByAccessToken = (accessToken: string, select?: string) => CustomerModel.findOne({
     "authentication.accessToken": accessToken
-});
-export const getUserById = (id: string) => CustomerModel.findById(id);
-export const getUserByGoogleId = (googleId: string) => CustomerModel.findOne({ "googleAuth.id": googleId });
+}).select(select);
+export const getUserById = (id: string, select?: string) => CustomerModel.findById(id).select(select);
+export const getUserByGoogleId = (googleId: string, select?: string) => CustomerModel.findOne({ "googleAuth.id": googleId }).select(select);
 export const createUser = (values: Record<string, any>) => new CustomerModel(values).save().then((user: any) => user.toObject());
 export const findOrCreateGoogleUser = async (values: Record<string, any>) => {
     return await CustomerModel.findOne(values).then(async (user: any) => {

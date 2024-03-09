@@ -40,6 +40,28 @@
                 "status": 401,
                 "message": "Authorization failed"
             }
+        },
+        "payload": {
+            "INVALID_PAYLOAD": {
+                "code": 10300,
+                "status": 400,
+                "message": "Invalid payload received, %m%"
+            },
+            "MISSING_PROPERTY": {
+                "code": 10301,
+                "status": 400,
+                "message": "Invalid payload received, %p% is required"
+            },
+            "INVALID_PROPERTY": {
+                "code": 10302,
+                "status": 400,
+                "message": "Invalid payload received, %p% is invalid"
+            },
+            "INCORRECT_PROPERTY": {
+                "code": 10303,
+                "status": 400,
+                "message": "%p% is incorrect"
+            }
         }
     },
     "registration": {
@@ -91,13 +113,18 @@
                 "status": 400,
                 "message": "Password must contain at least one uppercase letter"
             },
-            "MISSING_DIGIT": {
+            "MISSING_CHAR": {
                 "code": 11104,
+                "status": 400,
+                "message": "Password must contain at least one character"
+            },
+            "MISSING_DIGIT": {
+                "code": 11105,
                 "status": 400,
                 "message": "Password must contain at least one number"
             },
             "INCORRECT_PASSWORD": {
-                "code": 11105,
+                "code": 11106,
                 "status": 401,
                 "message": "Password is incorrect"
             }
@@ -112,6 +139,15 @@
                 "code": 11201,
                 "status": 400,
                 "message": "Username must be between 3 and 20 characters"
+            }
+        }
+    },
+    "subscription": { 
+        "payload": {
+            "ALREADY_SUBSCRIBED": {
+                "code": 12000,
+                "status": 400,
+                "message": "You are already subscribed"
             }
         }
     }

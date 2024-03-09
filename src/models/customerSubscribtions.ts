@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose";
 import { Subscription } from "types/subscribtionTypes";
-import { CustomerType } from "./customers";
 
 export interface SubscriptionType {
     subscription: Subscription;
     customer: Schema.Types.ObjectId;
+    createdDate: number;
+    updatedDate: number;
 }
 
 export const SubscriptionSchema = new Schema<SubscriptionType>({
@@ -23,19 +24,21 @@ export const SubscriptionSchema = new Schema<SubscriptionType>({
             commentCount: { type: Number, required: true }
         }
     },
-    customer: { type: Schema.Types.ObjectId, ref: "Customer", required: true }
+    customer: { type: Schema.Types.ObjectId, ref: "Customer", required: true },
+    createdDate: { type: Number, default: Date.now() },
+    updatedDate: { type: Number, default: Date.now() }
 });
 
 export const SubscriptionModel = model<SubscriptionType>("Subscription", SubscriptionSchema);
 
 // Functions
-export const getSubscriptionByCustomerId = async (customerId: string) => {
-    return await SubscriptionModel.findOne({ customer: customerId });
+export const getSubscriptionByCustomerId = async (customerId: string, select?: string) => {
+    return await SubscriptionModel.findOne({ customer: customerId }).select(select);
 };
-export const getCustomerBySubscriptionId = async (subscriptionId: string) => {
-    return await SubscriptionModel.findById(subscriptionId).populate("customer");
+export const getCustomerBySubscriptionId = async (subscriptionId: string, select?: string) => {
+    return await SubscriptionModel.findById(subscriptionId).populate("customer").select(select);
 }
-export const createSubscription = async (values: Record<string, any>) => {
+export const createSubscription = async <T extends keyof SubscriptionType, U extends SubscriptionType[T]>(values: Record<T, U>) => {
     return await new SubscriptionModel(values).save().then((subscription: any) => subscription.toObject());
 };
 export const findOrCreateSubscription = async (values: Record<string, any>) => {

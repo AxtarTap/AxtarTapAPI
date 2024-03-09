@@ -8,7 +8,8 @@ export interface WorkerType {
     password: string;
     authentication?: AuthenticationType;
     googleAuth?: GoogleAuthType;
-    createdDate?: Date;
+    createdDate?: number;
+    updatedDate?: number;
 }
 
 export const WorkerSchema = new Schema<WorkerType>({
@@ -31,18 +32,19 @@ export const WorkerSchema = new Schema<WorkerType>({
             }
         }
     },
-    createdDate: { type: Date, default: Date.now() }
+    createdDate: { type: Number, default: Date.now() },
+    updatedDate: { type: Number, default: null }
 });
 
 export const WorkerModel = model<WorkerType>("Worker", WorkerSchema);
 
 // Functions
-export const getUserByEmail = (email: string) => WorkerModel.findOne({ email });
-export const getUserByAccessToken = (accessToken: string) => WorkerModel.findOne({
+export const getUserByEmail = (email: string, select?: string) => WorkerModel.findOne({ email }).select(select);
+export const getUserByAccessToken = (accessToken: string, select?: string) => WorkerModel.findOne({
     "authentication.accessToken": accessToken
-});
-export const getUserById = (id: string) => WorkerModel.findById(id);
-export const getUserByGoogleId = (googleId: string) => WorkerModel.findOne({ "googleAuth.id": googleId });
+}).select(select);
+export const getUserById = (id: string, select?: string) => WorkerModel.findById(id).select(select);
+export const getUserByGoogleId = (googleId: string, select?: string) => WorkerModel.findOne({ "googleAuth.id": googleId }).select(select);
 export const createUser = (values: Record<string, any>) => new WorkerModel(values).save().then((user: any) => user.toObject());
 export const findOrCreateGoogleUser = async (values: Record<string, any>) => {
     return await WorkerModel.findOne(values).then(async (user: any) => {
