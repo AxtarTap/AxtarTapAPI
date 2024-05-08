@@ -1,5 +1,5 @@
 import express from "express";
-import passport, { DoneCallback, Profile } from "passport";
+import passport from "passport";
 import http from "http";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -10,10 +10,9 @@ import router from "./router";
 import logger from "./utils/logger";
 import flash from "connect-flash";
 import { config } from "dotenv";
-import { host as $ } from "./utils";
+import { host as $, requestLogger } from "./utils";
 import { checkUser } from "./middlewares";
 import { CustomerStrategy, WorkerStrategy } from "./helpers/passport";
-import { exec } from "child_process";
 
 console.clear();
 
@@ -30,13 +29,14 @@ app.use(flash());
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(requestLogger)
 app.use(checkUser);
 app.use('/v1/', router());
 passport.use('customer', CustomerStrategy);
 passport.use('worker', WorkerStrategy);
 
 app.use((req, res) => {
-    res.status(404).json({ status: 404, message: 'Not Found'});
+    res.status(404).json({ status: 404, message: 'Not found'});
 });
 
 // Server

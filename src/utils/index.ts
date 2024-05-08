@@ -1,6 +1,8 @@
 import { config } from "dotenv";
 import { ErrorManager } from "../helpers/managers/ErrorManager";
 import { APIError } from "../errors/APIError";
+import { Request, Response, NextFunction } from "express";
+import logger from "./logger";
 config();
 
 export const base = (path?: string): string => {
@@ -81,4 +83,9 @@ export const validateUsername = (username: string, errorHandler: ErrorManager): 
     } else {
         return true;
     }
+}
+
+export const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
+    logger.info(`Request (${req.method}) => "${req.path}"`);
+    next();
 }
